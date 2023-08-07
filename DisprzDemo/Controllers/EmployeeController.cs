@@ -24,20 +24,24 @@ namespace DisprzDemo.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Employee> GetEmployees()
+        public async Task<ActionResult<IEnumerable<Employee>>> GetEmployees()
         {
-            var list = _employeeRepo.Get();
+            var list = await _employeeRepo.Get();
             
-            return list;
+            return Ok(list);
         }
 
         [HttpGet]
         [Route("{id}")]
-        public Employee GetEmployee(int id)
+        public async Task<ActionResult<Employee>> GetEmployee(int id)
         {
-            var emp = _employeeRepo.Get(id);
+            var emp = await _employeeRepo.Get(id);
 
-            return emp;
+            if (emp == null) {
+                return NotFound();
+            }
+
+            return Ok(emp);
         }
 
         [HttpPost]
@@ -69,7 +73,7 @@ namespace DisprzDemo.Controllers
             {
                 var emp = await _employeeRepo.Add(employee);
 
-                return emp;
+                return Ok(emp);
             }
             else
             {
@@ -85,7 +89,7 @@ namespace DisprzDemo.Controllers
             {
                 var emp = await _employeeRepo.Update(employee);
 
-                return emp;
+                return Ok(emp);
             }
             else
             {
@@ -101,7 +105,7 @@ namespace DisprzDemo.Controllers
             {
                 var emp = await _employeeRepo.Delete(id);
 
-                return emp;
+                return Ok(emp);
             }
             catch (Exception e)
             {

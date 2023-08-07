@@ -1,12 +1,13 @@
 ﻿using demo.EF;
 using demo.model.ApiModels.Employee;
+using Microsoft.EntityFrameworkCore;
 
 namespace demo.dataServices
 {
     public interface IEmployeeRepository
     {
-        List<Employee> Get();
-        Employee Get(int id);
+        Task<List<Employee>> Get();
+        Task<Employee> Get(int id);
         Task<Employee> Add(AddEmployee employee);
         Task<Employee> Update(EmployeeUpdate employee);
         Task<Employee> Delete(int id);
@@ -14,22 +15,22 @@ namespace demo.dataServices
 
     public class EmployeeRepository : IEmployeeRepository
     {
-        public List<Employee> Get()
+        public async Task<List<Employee>> Get()
         {
             using (var context = new ApiContext())
             {
-                var employeees = context.Employees.Select(x => toEmpApiModel(x)).ToList();
+                var employeees = await context.Employees.Select(x => toEmpApiModel(x)).ToListAsync();
 
                 return employeees;
             }
         }
 
-        public Employee Get(int id)
+        public async Task<Employee> Get(int id)
         {
             Employee emp;
             using (var context = new ApiContext())
             {
-                var employee = context.Employees.FirstOrDefault(x => x.Id == id);
+                var employee = await context.Employees.FirstOrDefaultAsync(x => x.Id == id);
                 emp = toEmpApiModel(employee);
             }
 
