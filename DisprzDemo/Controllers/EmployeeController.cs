@@ -15,7 +15,7 @@ namespace DisprzDemo.Controllers
         private readonly IEmployeeRepository _employeeRepo;
         private readonly ILogger<EmployeeController> _logger;
         private readonly IMailService _mailService;
-        
+
         public EmployeeController(IEmployeeRepository employeeRepo, ILogger<EmployeeController> logger, IMailService mailService)
         {
             _employeeRepo = employeeRepo;
@@ -27,7 +27,7 @@ namespace DisprzDemo.Controllers
         public async Task<ActionResult<IEnumerable<Employee>>> GetEmployees()
         {
             var list = await _employeeRepo.Get();
-            
+
             return Ok(list);
         }
 
@@ -37,7 +37,8 @@ namespace DisprzDemo.Controllers
         {
             var emp = await _employeeRepo.Get(id);
 
-            if (emp == null) {
+            if (emp == null)
+            {
                 return NotFound();
             }
 
@@ -50,9 +51,9 @@ namespace DisprzDemo.Controllers
         {
             try
             {
-                var emp = _employeeRepo.Get(id);
+                var emp = await _employeeRepo.Get(id);
 
-                if(emp != null)
+                if (emp != null)
                 {
                     await _mailService.SendWelcomeEmailAsync(emp);
                     return Ok();
@@ -67,7 +68,7 @@ namespace DisprzDemo.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Employee>> Add([FromBody] AddEmployee employee) 
+        public async Task<ActionResult<Employee>> Add([FromBody] AddEmployee employee)
         {
             if (ModelState.IsValid)
             {
@@ -79,7 +80,7 @@ namespace DisprzDemo.Controllers
             {
                 return BadRequest(ModelState);
             }
-          
+
         }
 
         [HttpPut]
@@ -88,8 +89,12 @@ namespace DisprzDemo.Controllers
             if (ModelState.IsValid)
             {
                 var emp = await _employeeRepo.Update(employee);
-
-                return Ok(emp);
+                if (emp != null)
+                {
+                    await _mailService.SendWelcomeEmailAsync(emp);
+                    return Ok();
+                }
+                return NotFound();
             }
             else
             {
@@ -104,8 +109,12 @@ namespace DisprzDemo.Controllers
             try
             {
                 var emp = await _employeeRepo.Delete(id);
-
-                return Ok(emp);
+                if (emp != null)
+                {
+                    await _mailService.SendWelcomeEmailAsync(emp);
+                    return Ok();
+                }
+                return NotFound();
             }
             catch (Exception e)
             {

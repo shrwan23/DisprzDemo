@@ -43,7 +43,7 @@ namespace demo.dataServices
             Employee emp;
             using (var context = new ApiContext())
             {
-                var obj =await context.Employees.AddAsync(new EF.Entities.Employee
+                var obj = await context.Employees.AddAsync(new EF.Entities.Employee
                 {
                     Name = employee.Name,
                     Email = employee.Email,
@@ -66,21 +66,24 @@ namespace demo.dataServices
 
         public async Task<Employee> Update(EmployeeUpdate employee)
         {
-            Employee emp;
+            Employee emp = null;
             using (var context = new ApiContext())
             {
-                var obj = context.Employees.FirstOrDefault(x => x.Id == employee.Id);
-                obj.Name = employee.Name;
-                obj.Email = employee.Email;
-                obj.BirthDate = employee.BirthDate;
-                obj.ContactNo = employee.ContactNo;
-                obj.Department = employee.Department;
-                obj.IsActive = employee.IsActive;
-                obj.Salary = employee.Salary;
-                obj.LastUpdatedOn = DateTime.Now;
-                obj.LastUpdatedBy = "shravan";
-                await context.SaveChangesAsync();
-                emp = toEmpApiModel(obj);
+                var obj = await context.Employees.FirstOrDefaultAsync(x => x.Id == employee.Id);
+                if (obj != null)
+                {
+                    obj.Name = employee.Name;
+                    obj.Email = employee.Email;
+                    obj.BirthDate = employee.BirthDate;
+                    obj.ContactNo = employee.ContactNo;
+                    obj.Department = employee.Department;
+                    obj.IsActive = employee.IsActive;
+                    obj.Salary = employee.Salary;
+                    obj.LastUpdatedOn = DateTime.Now;
+                    obj.LastUpdatedBy = "shravan";
+                    await context.SaveChangesAsync();
+                    emp = toEmpApiModel(obj);
+                }
             }
 
             return emp;
@@ -88,13 +91,16 @@ namespace demo.dataServices
 
         public async Task<Employee> Delete(int id)
         {
-            Employee emp;
+            Employee emp = null;
             using (var context = new ApiContext())
             {
                 var employee = context.Employees.FirstOrDefault(x => x.Id == id);
-                emp = toEmpApiModel(employee);
-                context.Employees.Remove(employee);
-                await context.SaveChangesAsync();
+                if (employee != null)
+                {
+                    emp = toEmpApiModel(employee);
+                    context.Employees.Remove(employee);
+                    await context.SaveChangesAsync();
+                }
             }
 
             return emp;

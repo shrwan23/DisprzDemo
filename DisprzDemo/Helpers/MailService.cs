@@ -48,10 +48,10 @@ namespace DisprzDemo.Helpers
                 Subject = $"Welcome {emp.Name}",
                 Body = @$"
 <br>
-<h4>Welcome to DEMO @{emp.Name},</h4>
+<h4>Hi {emp.Name},</h4>
 <br>
-<p>Welcome it is a greate comp, You will certinly enjoy it, </p>
-<p.It will a great chance to learn and grow.</p>
+<p>Welcome to <b>DEMO</b>.<br> it is a great company, You will certinly enjoy it.</p>
+<p>It will a great chance to learn and grow.</p>
 <br>
 <br>
 <h4>Thanks,</h4>
